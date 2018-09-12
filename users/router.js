@@ -13,7 +13,7 @@ router.post('/',jsonParser,checkChars,(req,res) => {
 			code:422,
 			reason:"ValidationError",
 			message:"Illegal Character",
-			location: checkChars
+			location: req.checkChars
 		});
 	}
 
