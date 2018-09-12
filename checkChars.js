@@ -7,10 +7,20 @@ var checkChars = function (req, res, next) {
 			return req.body[key];
 		}
 
-	
 	});
 	req.checkChars = checkCharacters;
-  	next();
+	if(req.checkChars){
+		return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Illegal Character",
+			location: checkChars
+		});
+	}
+	else{
+		next();
+	}
+  	
 }
 
 module.exports = {checkChars};

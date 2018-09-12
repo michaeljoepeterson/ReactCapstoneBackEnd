@@ -1,31 +1,54 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const jsonParser = bodyParser.json();
 const {Superpower} = require('../models/superpowers');
 const {checkChars} = require('../checkChars');
 const router = express.Router();
 const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false });
-
-router.post("/",jwtAuth,jsonParser, checkChars,(req,res)=>{
-	if(req.checkChars){
+router.use(jwtAuth)
+router.post("/",checkChars,(req,res)=>{
+	const powerName = req.body.powerName;
+	if(powerName === ""){
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
-			message:"Illegal Character",
-			location: checkChars
+			message:"Enter a name"
 		});
 	}
-	const powerStrength = req.body.powerStrength;
-	const powerSpecial = req.body.powerSpecial;
-	const powerDefense = req.body.powerDefense;
-	if(!powerStrength || !powerSpecial || !powerDefense){
+	const powerAttack = parseInt(req.body.powerAttack);
+	const powerSpecial = parseInt(req.body.powerSpecial);
+	const powerDefense = parseInt(req.body.powerDefense);
+	if(powerAttack === NaN || powerSpecial === NaN || powerDefense === NaN){
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
 			message:"Not a number"
 		});
 	}
+	const sum = powerAttack + powerSpecial + powerDefense;
+	console.log("the sum is " + sum);
+	if(sum !== 100){
+		return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Sum is not 100"
+		});
+	}
+	return Superpower.create({
+		powerName:powerName,
+		attack:powerAttack,
+		specialAttack: powerSpecial,
+		defense: powerDefense
+	})
+	.then(superpower => {
+		return res.status(201).json(superpower.serialize());
+	})
+	.catch(err => {
+		if(err.reason === 'ValidationError'){
+			return res.status(err.code).json(err);
+		}
+		console.log("error ", err);
+		res.status(500).json({code:500, message:'internal server error'});
+	});
 });
 
 module.exports = {router};

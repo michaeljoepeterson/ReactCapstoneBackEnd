@@ -7,15 +7,6 @@ const {checkChars} = require('../checkChars');
 const router = express.Router();
 
 router.post('/',jsonParser,checkChars,(req,res) => {
-	
-	if (req.checkChars){
-		return res.status(422).json({
-			code:422,
-			reason:"ValidationError",
-			message:"Illegal Character",
-			location: req.checkChars
-		});
-	}
 
 	const requestFields = Object.keys(req.body).length;
 	if (requestFields > 2){

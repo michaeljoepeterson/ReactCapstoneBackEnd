@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const mongoose = require("mongoose");
 const passport = require('passport');
 const app = express();
+const bodyParser = require("body-parser");
+const jsonParser = bodyParser.json();
 const {User} = require("./models/user");
 const {PORT, DATABASE_URL } = require('./config');
 const {router: userRouter} = require('./users/router');
@@ -22,6 +24,7 @@ app.use(function (req, res, next) {
   }
   next();
 });
+app.use(jsonParser);
 app.use(morgan("common"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
