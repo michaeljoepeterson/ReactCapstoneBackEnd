@@ -23,13 +23,13 @@ const userSchema = mongoose.Schema({
 	password: {type:String,required:true},
 	wins: {type:Number,default:0},
 	matches: {type:Number,default:0},
-	heroes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hero', unique: false, required: [false, 'No hero found']}],
 	matchHistory: {type:Array}
 });
 
 userSchema.methods.serialize = function(){
 	return{
 		username: this.username || '',
+		id: this._id
 	}
 }
 

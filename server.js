@@ -13,6 +13,7 @@ const {PORT, DATABASE_URL } = require('./config');
 const {router: userRouter} = require('./users/router');
 const {router: authRouter} = require('./auth/router');
 const {router: powerRouter} = require('./superpowers/router');
+const {router: heroRouter} = require('./hero/router');
 const {localStrategy, jwtStrategy} = require('./auth/strategies');
 mongoose.Promise = global.Promise;
 app.use(function (req, res, next) {
@@ -29,6 +30,7 @@ app.use(morgan("common"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/superpower",powerRouter);
+app.use("/api/hero",heroRouter);
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const superpowerSchema = mongoose.Schema({
-	powerName: {type:String,required:true},
+	powerName: {type:String,required:true,unique:true},
 	attack: {type:Number,required:true},
 	specialAttack: {type:Number,required:true},
 	defense: {type:Number,required:true}

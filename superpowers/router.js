@@ -4,7 +4,7 @@ const {checkChars} = require('../checkChars');
 const router = express.Router();
 const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false });
-router.use(jwtAuth)
+router.use(jwtAuth);
 router.post("/",checkChars,(req,res)=>{
 	const powerName = req.body.powerName;
 	if(powerName === ""){
