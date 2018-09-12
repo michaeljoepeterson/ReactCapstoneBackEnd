@@ -3,18 +3,12 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const {User} = require('../models/user');
 const jwt = require('jsonwebtoken');
+const {checkChars} = require('../checkChars');
 const router = express.Router();
 
-router.post('/',jsonParser,(req,res) => {
+router.post('/',jsonParser,checkChars,(req,res) => {
 	
-	const legalChars = /^[a-zA-z0-9\{\}\<\>\[\]\+\*.,?!;\s']*$/;
-	const checkChars = Object.keys(req.body).find(key =>{
-		const check = legalChars.test(req.body[key]);
-		if(!check){
-			return req.body[key];
-		}
-	});
-	if (checkChars){
+	if (req.checkChars){
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
