@@ -10,10 +10,10 @@ const superpowerSchema = mongoose.Schema({
 
 superpowerSchema.methods.serialize = function(){
 	return{
-		powerName: this.powerName,
-		attack: this.attack || '',
-		specialAttack: this.specialAttack || '',
-		defense: this.defense || ''
+		powerName: this.powerName || '',
+		attack: this.attack || 0,
+		specialAttack: this.specialAttack || 0,
+		defense: this.defense || 0
 	}
 }
 

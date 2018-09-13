@@ -30,7 +30,7 @@ router.post("/",checkChars,(req,res)=>{
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
-			message:"Sum is not 100"
+			message:"Sum is not correct"
 		});
 	}
 	return Superpower.create({
