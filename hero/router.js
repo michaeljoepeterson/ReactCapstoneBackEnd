@@ -43,6 +43,9 @@ router.post("/",checkChars,(req,res)=>{
 			message:"Sum is not correct"
 		});
 	}
+	//send super power id with request
+	//find all the abilities at once
+	//{ $or: [ {powerName: ability1}, { powerName: ability2} ...] }
 	return Superpower.find({powerName:ability1})
 	.then(power =>{
 		console.log(power);

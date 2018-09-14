@@ -51,4 +51,12 @@ router.post("/",checkChars,(req,res)=>{
 	});
 });
 
+router.get("/",(req,res) => {
+	//get all the super powers
+	return Superpower.find({})
+	.then(powers => {
+		res.json(powers.map(power => power.serialize()));
+	})	
+});
+
 module.exports = {router};

@@ -13,7 +13,8 @@ superpowerSchema.methods.serialize = function(){
 		powerName: this.powerName || '',
 		attack: this.attack || 0,
 		specialAttack: this.specialAttack || 0,
-		defense: this.defense || 0
+		defense: this.defense || 0,
+		id: this._id
 	}
 }
 
