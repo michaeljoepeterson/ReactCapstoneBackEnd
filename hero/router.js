@@ -9,15 +9,17 @@ router.use(jwtAuth);
 //create heroes
 router.post("/",checkChars,(req,res)=>{
 	const userId = req.user.id;
-	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility} = req.body
-	let heroPowersId = req.body.heroPowersId;
-	if(heroName === ""){
+	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility,ability1,ability2,ability3} = req.body;
+	console.log("the req is",req.body);
+	let heroPowersId = [];
+	if(heroName === "" || ability1 === "" || ability2 === "" || ability3 === ""){
 			return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
 			message:"Missing field"
 		});
 	}
+	console.log("health is before parse", maxhealth,parseInt(maxhealth));
 	health = parseInt(health);
 	maxhealth = parseInt(maxhealth);
 	abilityPoints = parseInt(abilityPoints);
@@ -35,7 +37,10 @@ router.post("/",checkChars,(req,res)=>{
 			message:"Not a number"
 		});
 	}
+
 	const sum = maxhealth + maxAbilityPoints + strength + toughness + agility + superAbility;
+	console.log("max health", maxhealth);
+	console.log("the sum is", sum);
 	if(sum !== 450){
 		return res.status(422).json({
 			code:422,
@@ -43,23 +48,10 @@ router.post("/",checkChars,(req,res)=>{
 			message:"Sum is not correct"
 		});
 	}
-	return Hero.create({
-			heroName:heroName,
-			health:health,
-			maxhealth: maxhealth,
-			abilityPoints: abilityPoints,
-			maxAbilityPoints:maxAbilityPoints,
-			strength:strength,
-			toughness:toughness,
-			agility:agility,
-			superAbility:superAbility,
-			superPowers:heroPowersId,
-			owner:userId
-	})	
+	console.log("after third check");
 	//send super power id with request
 	//find all the abilities at once
 	//{ $or: [ {powerName: ability1}, { powerName: ability2} ...] }
-	/*
 	return Superpower.find({powerName:ability1})
 	.then(power =>{
 		console.log(power);
@@ -89,7 +81,6 @@ router.post("/",checkChars,(req,res)=>{
 			owner:userId
 		})		
 	})
-	*/
 	.then(hero => {
 		return res.status(201).json(hero.serialize());
 	})
