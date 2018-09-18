@@ -10,7 +10,7 @@ router.use(jwtAuth);
 router.post("/",checkChars,(req,res)=>{
 	const userId = req.user.id;
 	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility,ability1,ability2,ability3} = req.body
-	let heroPowersId = [];
+	let heroPowersId = req.body.heroPowersId;
 	if(heroName === "" || ability1 === "" || ability2 === "" || ability3 === ""){
 			return res.status(422).json({
 			code:422,
@@ -43,9 +43,23 @@ router.post("/",checkChars,(req,res)=>{
 			message:"Sum is not correct"
 		});
 	}
+	return Hero.create({
+			heroName:heroName,
+			health:health,
+			maxhealth: maxhealth,
+			abilityPoints: abilityPoints,
+			maxAbilityPoints:maxAbilityPoints,
+			strength:strength,
+			toughness:toughness,
+			agility:agility,
+			superAbility:superAbility,
+			superPowers:heroPowersId,
+			owner:userId
+	})	
 	//send super power id with request
 	//find all the abilities at once
 	//{ $or: [ {powerName: ability1}, { powerName: ability2} ...] }
+	/*
 	return Superpower.find({powerName:ability1})
 	.then(power =>{
 		console.log(power);
@@ -75,6 +89,7 @@ router.post("/",checkChars,(req,res)=>{
 			owner:userId
 		})		
 	})
+	*/
 	.then(hero => {
 		return res.status(201).json(hero.serialize());
 	})
