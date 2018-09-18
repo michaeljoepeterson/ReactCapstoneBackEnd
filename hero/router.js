@@ -9,9 +9,9 @@ router.use(jwtAuth);
 //create heroes
 router.post("/",checkChars,(req,res)=>{
 	const userId = req.user.id;
-	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility,ability1,ability2,ability3} = req.body
+	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility} = req.body
 	let heroPowersId = req.body.heroPowersId;
-	if(heroName === "" || ability1 === "" || ability2 === "" || ability3 === ""){
+	if(heroName === ""){
 			return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
