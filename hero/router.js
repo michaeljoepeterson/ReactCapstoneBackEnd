@@ -45,7 +45,7 @@ router.post("/",checkChars,(req,res)=>{
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
-			message:"Sum is not correct"
+			message:"Missing points"
 		});
 	}
 	console.log("after third check");
@@ -88,7 +88,15 @@ router.post("/",checkChars,(req,res)=>{
 		if(err.reason === 'ValidationError'){
 			return res.status(err.code).json(err);
 		}
-		console.log("error ", err);
+		if(err.code === 11000){
+
+			return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Name already taken"
+		});
+
+		}
 		res.status(500).json({code:500, message:'internal server error'});
 	});
 });
