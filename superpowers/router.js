@@ -46,6 +46,15 @@ router.post("/",checkChars,(req,res)=>{
 		if(err.reason === 'ValidationError'){
 			return res.status(err.code).json(err);
 		}
+		if(err.code === 11000){
+
+			return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Name already taken"
+		});
+
+		}
 		console.log("error ", err);
 		res.status(500).json({code:500, message:'internal server error'});
 	});
