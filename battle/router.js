@@ -8,11 +8,16 @@ router.use(jwtAuth);
 
 router.post("/", checkChars,(req,res) => {
 	const {username} = req.body;
+	let players = {};
 
-	return User.find({username})
-
-	.then(user =>{
-		return res.status(201).json(user);
+	//return User.aggregate([{$sample:{size:1}}])
+	return User.find({})
+	.then(users =>{
+		//players.player1 = user._id;
+		//will also have to find another user
+		//possible randomly search through this?
+		console.log(users);
+		return res.status(201).json(users);
 	})
 
 	.catch(err => {
