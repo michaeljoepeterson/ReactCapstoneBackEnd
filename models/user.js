@@ -2,19 +2,7 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-//todo think about and expand
-/*
-const heroSchema = mongoose.Schema({
-	health: {type:Number},
-	maxhealth: {type:Number},
-	abilityPoints: {type:Number},
-	maxAbilityPoints: {type:Number},
-	strength: {type:Number},
-	toughness: {type:Number},
-	agility: {type:Number},
-	superPowers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Superpower', unique: false, required: [false, 'No super power found']}]
-});
-*/
+
 //User.findById(123).populate(heroes)
 //User.findOneAndUpdate({_id: 123}, {$push: { heroes: hero._id } } ) )
 //use push when updating/creating new heroes
