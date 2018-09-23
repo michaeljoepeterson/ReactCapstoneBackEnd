@@ -11,7 +11,7 @@ router.use(jwtAuth);
 //then the signed in user how do we persist/get the characters for starting a match?
 //probably make another get request?
 //if we do this we will want to return all the data to the browser including powers so we can send all that to the battle route
-router.post("/", Battle, checkChars,(req,res) => {
+router.post("/", checkChars,Battle,(req,res) => {
 	const {username} = req.body;
 	let players = {};
 
