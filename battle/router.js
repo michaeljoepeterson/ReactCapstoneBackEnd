@@ -50,11 +50,15 @@ router.get("/findmatch", (req,res) => {
 		}
 
 		opponent = users[randomUserIndex]
-		return Hero.find({owner:opponent._id});
+		return Hero.find({owner:opponent._id}).populate("superPowers")
 	})
 
 	.then(heroes => {
-		return res.status(201).json(heroes);
+		let heroUserIndex = Math.floor(Math.random() * heroes.length); 
+		let heroOppoent = heroes[heroUserIndex];
+		return res.status(201).json({
+			opponent,
+			heroOppoent});
 	})
 
 	.catch(err => {
