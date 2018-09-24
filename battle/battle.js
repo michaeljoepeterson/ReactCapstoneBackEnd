@@ -65,6 +65,13 @@ function resetHero(hero){
 	hero.abilityPoints = hero.maxAbilityPoints;
 }
 
+function battleTurnPassive(hero,hero2,heroPassives){
+	hero2.health -= heroPassives.damage;
+	const critDamage = critHandle(heroPassives.critChance,hero.agility,20,10);
+	hero2.health -= critDamage;
+	hero.health += heroPassives.heal;
+}
+
 function choice(heroHealth,heroAbilityPoints){
 	choices = {
 		attack:0,
@@ -92,6 +99,20 @@ function choice(heroHealth,heroAbilityPoints){
 	return heroChoice;
 }
 
+function critHandle(critChance,agility,successMax,failMax){
+	const crit = Math.floor(Math.random() * 101); 
+	let specialDamage = 0;
+	console.log("crit chance and crit", critChance, crit);
+	if(crit <= critChance){
+		specialDamage += Math.round(successMax * (agility/100));
+		return specialDamage;
+	}
+	else{
+		specialDamage += Math.round(failMax * (agility/100));
+		return specialDamage;
+	}
+}
+
 let Battle = function(req,res,next){
 
 	const {heroOpponent,currentHero} = req.body;
@@ -106,8 +127,8 @@ let Battle = function(req,res,next){
 
 	const maxPowerArrayOpponent = determineMaxPowers(heroOpponent.superPowers);
 	const maxPowerArrayCurrentHero = determineMaxPowers(currentHero.superPowers);
-	console.log("max power array Opponent: ",maxPowerArrayOpponent);
-	console.log("max power array Current hero: ",maxPowerArrayCurrentHero);
+	//console.log("max power array Opponent: ",maxPowerArrayOpponent);
+	//console.log("max power array Current hero: ",maxPowerArrayCurrentHero);
 	const maxSpecialAttackOpponent = determineSpecialAttack(maxPowerArrayOpponent,heroOpponent);
 	const maxSpecialAttackCurrentHero = determineSpecialAttack(maxPowerArrayCurrentHero,currentHero);
 	heroOpponent.specialAttackStats = maxSpecialAttackOpponent;
@@ -120,6 +141,8 @@ let Battle = function(req,res,next){
 	currentHero.specialAttackPassives = maxSpecialPassivesCurrentHero;
 	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
 	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
+	//max crit 70,30 active ,passive 20 10
+	
 	next();
 }
 
