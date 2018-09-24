@@ -72,6 +72,18 @@ function battleTurnPassive(hero,hero2,heroPassives){
 	hero.health += heroPassives.heal;
 }
 
+function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
+	if (turnChoice === "attack"){
+
+	}
+}
+
+function basicAttack(agility,strength){
+	let agilityModifier = Math.floor(Math.random() * agility) / 100;
+	let strengthModifier = Math.floor(Math.random() * strength) / 100;
+	return Math.round(20 * (strengthModifier + agilityModifier));
+}
+
 function choice(heroHealth,heroAbilityPoints){
 	choices = {
 		attack:0,
@@ -142,7 +154,7 @@ let Battle = function(req,res,next){
 	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
 	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
 	//max crit 70,30 active ,passive 20 10
-	
+	//console.log(basicAttack(currentHero.strength,currentHero.agility));
 	next();
 }
 
