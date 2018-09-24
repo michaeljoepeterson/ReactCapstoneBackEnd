@@ -1,3 +1,5 @@
+//Sum up all the superpower stats
+//this array will be used to determine the heroes overall special attack valuues
 function determineMaxPowers(powerArray){
 		let maxArray = [0,0,0];
 		powerArray.forEach(power => {
@@ -8,7 +10,8 @@ function determineMaxPowers(powerArray){
 
 		return maxArray;
 	}
-
+//determine the overall special attack values, taking into account their max powers and hero stats
+//will be used if the character chooses to do a special attack
 function determineSpecialAttack(maxPowerArray,hero){
 	let specialResults= {
 		damage:0,
@@ -34,7 +37,8 @@ function determineSpecialAttack(maxPowerArray,hero){
 
 	return specialResults;
 }
-
+//determine the total passive special values
+//these will be used at the end of every turn and will basically act as a small special attack every turn
 function determineSpecialAttackPassive(maxPowerArray,hero){
 	let specialPassives = {
 		damage:0,
@@ -54,6 +58,38 @@ function determineSpecialAttackPassive(maxPowerArray,hero){
 	}
 
 	return specialPassives;
+}
+
+function resetHero(hero){
+	hero.health = hero.maxhealth;
+	hero.abilityPoints = hero.maxAbilityPoints;
+}
+
+function choice(heroHealth,heroAbilityPoints){
+	choices = {
+		attack:0,
+		special:0,
+		charge:0
+	}
+
+	choices.attack = Math.floor(Math.random() * 31); 
+	choices.special = Math.floor(Math.random() * 31); 
+	if(heroHealth <= 50 || heroAbilityPoints <= 50){
+		choices.charge = Math.floor(Math.random() * 11) + 20; 
+	}
+	else{
+		choices.charge = Math.floor(Math.random() * 31); 
+	}
+	let choiceMax = 0;
+	let heroChoice = "";
+	for(let key in choices){
+		if(choices[key] > choiceMax){
+			choiceMax = choices[key];
+			heroChoice = key;
+		}
+	}
+	console.log("hero choice object ", choices);
+	return heroChoice;
 }
 
 let Battle = function(req,res,next){
@@ -76,14 +112,14 @@ let Battle = function(req,res,next){
 	const maxSpecialAttackCurrentHero = determineSpecialAttack(maxPowerArrayCurrentHero,currentHero);
 	heroOpponent.specialAttackStats = maxSpecialAttackOpponent;
 	currentHero.specialAttackStats = maxSpecialAttackCurrentHero;
-	console.log("max special array Opponent: ",heroOpponent.specialAttackStats);
-	console.log("max special array Current hero: ",currentHero.specialAttackStats);
+	//console.log("max special array Opponent: ",heroOpponent.specialAttackStats);
+	//console.log("max special array Current hero: ",currentHero.specialAttackStats);
 	const maxSpecialPassivesOpponent = determineSpecialAttackPassive(maxPowerArrayOpponent,heroOpponent);
 	const maxSpecialPassivesCurrentHero = determineSpecialAttackPassive(maxPowerArrayCurrentHero,currentHero);
 	heroOpponent.specialAttackPassives = maxSpecialPassivesOpponent;
 	currentHero.specialAttackPassives = maxSpecialPassivesCurrentHero;
-	console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
-	console.log("max special array Current hero: ",currentHero.specialAttackPassives);
+	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
+	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
 	next();
 }
 

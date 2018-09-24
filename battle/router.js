@@ -21,7 +21,7 @@ router.post("/", checkChars,Battle,(req,res) => {
 		//players.player1 = user._id;
 		//will also have to find another user
 		//possible randomly search through this?
-		console.log(users.length);
+		//console.log(users.length);
 		return res.status(201).json(users);
 	})
 
