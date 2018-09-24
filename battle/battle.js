@@ -75,13 +75,53 @@ function battleTurnPassive(hero,hero2,heroPassives){
 function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 	if (turnChoice === "attack"){
 
+		const damage = basicAttack(hero.agility,hero.strength);
+		hero2.health -= damage;
+		console.log("hero attacked for ",damage);
+	}
+	else if(turnChoice === "special" && hero.abilityPoints >= heroSpecialStats.totalAP){
+		hero.abilityPoints -= heroSpecialStats.totalAP;
+		hero2.health -= heroSpecialStats.damage;
+		const critDamage = critHandle(heroSpecialStats.critChance,hero.agility,hero.superAbility,70,30);
+		hero2.health -= critDamage;
+		hero.health += heroSpecialStats.heal;
+		if(hero.health > hero.maxhealth){
+			hero.health = hero.maxhealth;
+		}
+		console.log("hero did a special for ",critDamage);
+	}
+	else if(turnChoice === "charge"){
+		const charges = chargeCharacter(hero.toughness,hero.superAbility);
+		hero.health += charges.healthAdded;
+		hero.abilityPoints += charges.abilityPointsAdded;
+		if(hero.health > hero.maxhealth){
+			hero.health = hero.maxhealth;
+		}
+		if(hero.abilityPoints > hero.maxAbilityPoints){
+			hero.abilityPoints = hero.maxAbilityPoints;
+		}
+		console.log("hero healed for ",charges);
+	}
+	else{
+		damage = basicAttack(hero.agility,hero.strength);
+		hero2.health -= damage;
 	}
 }
 
 function basicAttack(agility,strength){
-	let agilityModifier = Math.floor(Math.random() * agility) / 100;
-	let strengthModifier = Math.floor(Math.random() * strength) / 100;
+	const agilityModifier = Math.floor(Math.random() * agility) / 100;
+	const strengthModifier = Math.floor(Math.random() * strength) / 100;
 	return Math.round(20 * (strengthModifier + agilityModifier));
+}
+
+function chargeCharacter(toughness,superAbility){
+	const toughnessModifier = Math.floor(Math.random() * toughness) / 100;
+	const superModifier = Math.floor(Math.random() * superAbility) / 100;
+	let rechargValues = {
+		healthAdded: Math.round(25 * toughnessModifier),
+		abilityPointsAdded: Math.round(25 * superModifier)
+	};
+	return rechargValues;
 }
 
 function choice(heroHealth,heroAbilityPoints){
@@ -154,7 +194,10 @@ let Battle = function(req,res,next){
 	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
 	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
 	//max crit 70,30 active ,passive 20 10
-	//console.log(basicAttack(currentHero.strength,currentHero.agility));
+	const heroChoice = choice(heroOpponent.health,heroOpponent.abilityPoints);
+	console.log("hero choice ", heroChoice);
+	battleTurn(heroChoice,heroOpponent,currentHero,heroOpponent.specialAttackStats);
+	console.log("after one turn heros",heroOpponent,currentHero);
 	next();
 }
 
