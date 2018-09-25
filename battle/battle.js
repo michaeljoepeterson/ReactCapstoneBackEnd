@@ -31,7 +31,7 @@ function determineSpecialAttack(maxPowerArray,hero){
 		}
 		else if(i===2){
 			specialResults.totalAP += Math.round(50 * (1 - hero.toughness / 100));
-			specialResults.heal += Math.round(15 * maxPowerArray[i] / 100 * hero.toughness/100);
+			specialResults.heal += Math.round(30 * maxPowerArray[i] / 100 * hero.toughness/100);
 		}
 	}
 
@@ -77,7 +77,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 
 		const damage = basicAttack(hero.agility,hero.strength);
 		hero2.health -= damage;
-		console.log("hero attacked for ",damage);
+		//console.log("hero attacked for ",damage);
 	}
 	else if(turnChoice === "special" && hero.abilityPoints >= heroSpecialStats.totalAP){
 		hero.abilityPoints -= heroSpecialStats.totalAP;
@@ -88,7 +88,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 		if(hero.health > hero.maxhealth){
 			hero.health = hero.maxhealth;
 		}
-		console.log("hero did a special for ",critDamage);
+		//console.log("hero did a special for ",critDamage);
 	}
 	else if(turnChoice === "charge"){
 		const charges = chargeCharacter(hero.toughness,hero.superAbility);
@@ -100,7 +100,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 		if(hero.abilityPoints > hero.maxAbilityPoints){
 			hero.abilityPoints = hero.maxAbilityPoints;
 		}
-		console.log("hero healed for ",charges);
+		//console.log("hero healed for ",charges);
 	}
 	else{
 		damage = basicAttack(hero.agility,hero.strength);
@@ -134,7 +134,7 @@ function choice(heroHealth,heroAbilityPoints){
 	choices.attack = Math.floor(Math.random() * 31); 
 	choices.special = Math.floor(Math.random() * 31); 
 	if(heroHealth <= 50 || heroAbilityPoints <= 50){
-		choices.charge = Math.floor(Math.random() * 11) + 20; 
+		choices.charge = Math.floor(Math.random() * 21) + 10; 
 	}
 	else{
 		choices.charge = Math.floor(Math.random() * 31); 
@@ -147,14 +147,14 @@ function choice(heroHealth,heroAbilityPoints){
 			heroChoice = key;
 		}
 	}
-	console.log("hero choice object ", choices);
+	//console.log("hero choice object ", choices);
 	return heroChoice;
 }
 
 function critHandle(critChance,agility,successMax,failMax){
 	const crit = Math.floor(Math.random() * 101); 
 	let specialDamage = 0;
-	console.log("crit chance and crit", critChance, crit);
+	//console.log("crit chance and crit", critChance, crit);
 	if(crit <= critChance){
 		specialDamage += Math.round(successMax * (agility/100));
 		return specialDamage;
@@ -163,6 +163,40 @@ function critHandle(critChance,agility,successMax,failMax){
 		specialDamage += Math.round(failMax * (agility/100));
 		return specialDamage;
 	}
+}
+
+function startBattle(hero1,hero2){
+	let battleCounter = 0;
+	let hero1Wins = 0;
+	let hero2Wins = 0;
+
+	while(battleCounter < 100){
+		while (hero1.health > 0 && hero2.health > 0){
+			//console.log("hero healths at start: ",hero1.health ,hero2.health);
+			//console.log("hero wins at start: ",hero1Wins,hero2Wins);
+			//console.log("battlecounter: ", battleCounter);
+			hero1Choice = choice(hero1.health,hero1.abilityPoints);
+			hero2Choice = choice(hero2.health,hero2.abilityPoints);
+			battleTurn(hero2Choice,hero2,hero1,hero2.specialAttackStats);
+			battleTurn(hero1Choice,hero1,hero2,hero1.specialAttackStats);
+			battleTurnPassive(hero2,hero1,hero2.specialAttackPassives)
+			battleTurnPassive(hero1,hero2,hero1.specialAttackPassives);
+				
+		}
+		battleCounter++;
+		if(hero1.health <= 0){
+				hero2Wins++;
+				resetHero(hero1);
+				resetHero(hero2);
+		}
+		if(hero2.health <= 0){
+				hero1Wins++;	
+				resetHero(hero1);
+				resetHero(hero2);
+		}
+	}
+	console.log("total wins for " + hero1.heroName,hero1Wins)
+	console.log("total wins for " + hero2.heroName,hero2Wins)
 }
 
 let Battle = function(req,res,next){
@@ -194,10 +228,8 @@ let Battle = function(req,res,next){
 	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
 	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
 	//max crit 70,30 active ,passive 20 10
-	const heroChoice = choice(heroOpponent.health,heroOpponent.abilityPoints);
-	console.log("hero choice ", heroChoice);
-	battleTurn(heroChoice,heroOpponent,currentHero,heroOpponent.specialAttackStats);
-	console.log("after one turn heros",heroOpponent,currentHero);
+	startBattle(currentHero,heroOpponent);
+	//startBattle(heroOpponent,currentHero);
 	next();
 }
 
