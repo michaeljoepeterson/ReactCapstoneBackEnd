@@ -6,12 +6,13 @@ const {User} = require('../models/user');
 const {Hero} = require("../models/heroes");
 const {Battle} = require("./battle");
 const {checkChars} = require('../checkChars');
+const {checkSum} = require('./checkSum');
 router.use(jwtAuth);
 //2 end points? one to get find an opponent? and other for the actual battle?
 //then the signed in user how do we persist/get the characters for starting a match?
 //probably make another get request?
 //if we do this we will want to return all the data to the browser including powers so we can send all that to the battle route
-router.post("/", checkChars,Battle,(req,res) => {
+router.post("/",checkSum, checkChars,Battle,(req,res) => {
 
 	//current user is hero1 and opponent user is hero 2
 	const {currentUser} = req.body;

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const leaderBoardUserSchema = mongoose.Schema({
-	scores: {type:Array}
+	username:{type:String}
 });
 
 
