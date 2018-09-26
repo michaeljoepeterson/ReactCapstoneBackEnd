@@ -65,18 +65,22 @@ function resetHero(hero){
 	hero.abilityPoints = hero.maxAbilityPoints;
 }
 
-function battleTurnPassive(hero,hero2,heroPassives){
+function battleTurnPassive(hero,hero2,heroPassives,heroStats){
 	hero2.health -= heroPassives.damage;
 	const critDamage = critHandle(heroPassives.critChance,hero.agility,20,10);
 	hero2.health -= critDamage;
 	hero.health += heroPassives.heal;
+	heroStats.damageTotal += heroPassives.damage;
+	heroStats.specialDamageTotal += critDamage;
+	heroStats.healthHealedTotal += heroPassives.heal;
 }
 
-function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
+function battleTurn(turnChoice, hero, hero2, heroSpecialStats,heroStats){
 	if (turnChoice === "attack"){
 
 		const damage = basicAttack(hero.agility,hero.strength);
 		hero2.health -= damage;
+		heroStats.damageTotal += damage;
 		//console.log("hero attacked for ",damage);
 	}
 	else if(turnChoice === "special" && hero.abilityPoints >= heroSpecialStats.totalAP){
@@ -85,6 +89,8 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 		const critDamage = critHandle(heroSpecialStats.critChance,hero.agility,hero.superAbility,70,30);
 		hero2.health -= critDamage;
 		hero.health += heroSpecialStats.heal;
+		heroStats.apTotal += heroSpecialStats.totalAP;
+		heroStats.specialDamageTotal += critDamage;
 		if(hero.health > hero.maxhealth){
 			hero.health = hero.maxhealth;
 		}
@@ -94,6 +100,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 		const charges = chargeCharacter(hero.toughness,hero.superAbility);
 		hero.health += charges.healthAdded;
 		hero.abilityPoints += charges.abilityPointsAdded;
+		heroStats.healthHealedTotal += charges.healthAdded;
 		if(hero.health > hero.maxhealth){
 			hero.health = hero.maxhealth;
 		}
@@ -105,6 +112,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats){
 	else{
 		damage = basicAttack(hero.agility,hero.strength);
 		hero2.health -= damage;
+		heroStats.damageTotal += damage;
 	}
 }
 
@@ -169,6 +177,18 @@ function startBattle(hero1,hero2){
 	let battleCounter = 0;
 	let hero1Wins = 0;
 	let hero2Wins = 0;
+	let hero1Stats = {
+		damageTotal:0,
+		apTotal:0,
+		specialDamageTotal:0,
+		healthHealedTotal:0
+	}
+	let hero2Stats = {
+		damageTotal:0,
+		apTotal:0,
+		specialDamageTotal:0,
+		healthHealedTotal:0
+	}
 
 	while(battleCounter < 100){
 		while (hero1.health > 0 && hero2.health > 0){
@@ -177,10 +197,10 @@ function startBattle(hero1,hero2){
 			//console.log("battlecounter: ", battleCounter);
 			hero1Choice = choice(hero1.health,hero1.abilityPoints);
 			hero2Choice = choice(hero2.health,hero2.abilityPoints);
-			battleTurn(hero2Choice,hero2,hero1,hero2.specialAttackStats);
-			battleTurn(hero1Choice,hero1,hero2,hero1.specialAttackStats);
-			battleTurnPassive(hero2,hero1,hero2.specialAttackPassives)
-			battleTurnPassive(hero1,hero2,hero1.specialAttackPassives);
+			battleTurn(hero2Choice,hero2,hero1,hero2.specialAttackStats,hero2Stats);
+			battleTurn(hero1Choice,hero1,hero2,hero1.specialAttackStats,hero1Stats);
+			battleTurnPassive(hero2,hero1,hero2.specialAttackPassives,hero1Stats)
+			battleTurnPassive(hero1,hero2,hero1.specialAttackPassives,hero2Stats);
 				
 		}
 		battleCounter++;
@@ -195,8 +215,19 @@ function startBattle(hero1,hero2){
 				resetHero(hero2);
 		}
 	}
-	console.log("total wins for " + hero1.heroName,hero1Wins)
-	console.log("total wins for " + hero2.heroName,hero2Wins)
+	console.log("total wins for " + hero1.heroName,hero1Wins);
+	console.log("total wins for " + hero2.heroName,hero2Wins);
+	//console.log("total stats for " + hero1.heroName,hero1Stats);
+	//console.log("total stats for " + hero2.heroName,hero2Stats);
+
+	const matchStats = {
+		hero1Wins,
+		hero2Wins,
+		hero2Stats,
+		hero1Stats
+	}
+
+	return matchStats;
 }
 
 let Battle = function(req,res,next){
@@ -225,11 +256,10 @@ let Battle = function(req,res,next){
 	const maxSpecialPassivesCurrentHero = determineSpecialAttackPassive(maxPowerArrayCurrentHero,currentHero);
 	heroOpponent.specialAttackPassives = maxSpecialPassivesOpponent;
 	currentHero.specialAttackPassives = maxSpecialPassivesCurrentHero;
-	//console.log("max special array Opponent: ",heroOpponent.specialAttackPassives);
-	//console.log("max special array Current hero: ",currentHero.specialAttackPassives);
-	//max crit 70,30 active ,passive 20 10
-	startBattle(currentHero,heroOpponent);
-	//startBattle(heroOpponent,currentHero);
+
+	//startBattle(currentHero,heroOpponent);
+	const results = startBattle(currentHero,heroOpponent);
+	req.results = results;
 	next();
 }
 

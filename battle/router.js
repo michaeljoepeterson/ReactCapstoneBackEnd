@@ -12,17 +12,47 @@ router.use(jwtAuth);
 //probably make another get request?
 //if we do this we will want to return all the data to the browser including powers so we can send all that to the battle route
 router.post("/", checkChars,Battle,(req,res) => {
-	const {username} = req.body;
-	let players = {};
 
-	//return User.aggregate([{$sample:{size:1}}])
-	return User.find({})
-	.then(users =>{
-		//players.player1 = user._id;
-		//will also have to find another user
-		//possible randomly search through this?
-		//console.log(users.length);
-		return res.status(201).json(users);
+	//current user is hero1 and opponent user is hero 2
+	const {currentUser} = req.body;
+	const {opponent} = req.body;
+	let currentUserWin = 0;
+	let opponentWin = 0;
+	if(req.results.hero1Wins > req.results.hero2Wins){
+		currentUserWin++;
+	}
+	else if(req.results.hero1Wins < req.results.hero2Wins){
+		opponentWin++;
+	}
+
+	console.log(req.results);
+	let matchCurrrentUser = {
+		opponent:opponent.username,
+		opponentHero:req.body.heroOpponent.heroName,
+		currentHero:req.body.currentHero.heroName,
+		win: currentUserWin === 1 ? "y":"n"
+	}
+	let matchOpponent = {
+		opponent:currentUser.username,
+		opponentHero:req.body.currentHero.heroName,
+		currentHero:req.body.heroOpponent.heroName,
+		win: opponentWin === 1 ? "y":"n"
+	}
+	console.log(currentUser.matchHistory);
+	currentUser.matchHistory.push(matchCurrrentUser);
+	currentUser.wins += currentUserWin;
+	opponent.matchHistory.push(matchOpponent);
+	opponent.wins += opponentWin;
+	console.log(currentUser.matchHistory);
+	return User.findOneAndUpdate({"username":currentUser.username},{$set:{matchHistory:currentUser.matchHistory},$inc:{wins:currentUserWin,matches:1}})
+	.then(user =>{
+	
+		return User.findOneAndUpdate({"username":opponent.username},{$set:{matchHistory:opponent.matchHistory},$inc:{wins:opponentWin,matches:1}})
+		
+	})
+
+	.then(user => {
+		return res.status(201).json(user)
 	})
 
 	.catch(err => {
