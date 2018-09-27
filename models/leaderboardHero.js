@@ -1,5 +1,10 @@
+const mongoose = require('mongoose');
+
 const leaderBoardHeroesSchema = mongoose.Schema({
-	scores: {type:Array}
+	username:{type:String},
+	wins:{type:Number},
+	winRate:{type:Number},
+	matches:{type:Number}
 });
 
 

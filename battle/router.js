@@ -4,6 +4,7 @@ const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false });
 const {User} = require('../models/user');
 const {Hero} = require("../models/heroes");
+const {LeaderBoardUser} = require("../models/leaderBoardUser");
 const {Battle} = require("./battle");
 const {checkChars} = require('../checkChars');
 const {checkSum} = require('./checkSum');
@@ -26,7 +27,7 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 		opponentWin++;
 	}
 
-	console.log(req.results);
+	//console.log(req.results);
 	let matchCurrrentUser = {
 		opponent:opponent.username,
 		opponentHero:req.body.heroOpponent.heroName,
@@ -39,12 +40,12 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 		currentHero:req.body.heroOpponent.heroName,
 		win: opponentWin === 1 ? "y":"n"
 	}
-	console.log(currentUser.matchHistory);
+	//console.log(currentUser.matchHistory);
 	currentUser.matchHistory.push(matchCurrrentUser);
 	currentUser.wins += currentUserWin;
 	opponent.matchHistory.push(matchOpponent);
 	opponent.wins += opponentWin;
-	console.log(currentUser.matchHistory);
+	//console.log(currentUser.matchHistory);
 	return User.findOneAndUpdate({"username":currentUser.username},{$set:{matchHistory:currentUser.matchHistory},$inc:{wins:currentUserWin,matches:1}})
 	.then(user =>{
 	
@@ -52,8 +53,62 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 		
 	})
 
-	.then(user => {
-		return res.status(201).json(user)
+	.then(user=>{
+		return LeaderBoardUser.find({})
+	})
+
+	.then(scores => {
+		console.log(scores);
+		let foundUser = false;
+		scores.forEach(score => {
+			if(score.username === currentUser.username){
+				foundUser = true;
+			}
+		})
+		const userWinRate = (currentUser.wins + currentUserWin) / (currentUser.matches + 1);
+		if(!foundUser){
+			return LeaderBoardUser.create({
+				username:currentUser.username,
+				wins:currentUser.wins + currentUserWin,
+				winRate:userWinRate,
+				matches:currentUser.matches + 1
+			})
+		}
+		else if(foundUser){
+			return LeaderBoardUser.findOneAndUpdate({"username":currentUser.username},{$set:{winRate:userWinRate},$inc:{wins:currentUserWin,matches:1}})
+		}
+		
+	})
+
+	.then(score => {
+		return LeaderBoardUser.find({})
+		
+	})
+
+	.then(scores => {
+		console.log(scores);
+		let foundUser = false;
+		scores.forEach(score => {
+			if(score.username === opponent.username){
+				foundUser = true;
+			}
+		})
+		const opponentWinRate = (opponent.wins + opponentWin) / (opponent.matches + 1);
+		if(!foundUser){
+			return LeaderBoardUser.create({
+				username:opponent.username,
+				wins:opponent.wins + opponentWin,
+				winRate:opponentWinRate,
+				matches:opponent.matches + 1
+			})
+		}
+		else if(foundUser){
+			return LeaderBoardUser.findOneAndUpdate({"username":opponent.username},{$set:{winRate:opponentWinRate},$inc:{wins:opponentWin,matches:1}})
+		}
+	})
+
+	.then(score => {
+		return res.status(201).json(req.results);
 	})
 
 	.catch(err => {
