@@ -101,10 +101,13 @@ router.post("/",checkChars,(req,res)=>{
 	});
 });
 //end point for the user owned heros
-router.post("/myHeroes",checkChars,(req,res)=>{
-	const user = req.user;
+router.get("/",checkChars,(req,res)=>{
+	const userId = req.query.userId;
+	return Hero.find({owner:userId}).populate("superPowers")
 
-	console.log(user.id);
+	.then(heroes => {
+		res.status(201).json(heroes);
+	})
 });
 
 module.exports = {router};
