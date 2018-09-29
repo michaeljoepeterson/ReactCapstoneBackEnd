@@ -136,8 +136,8 @@ router.get("/findmatch", (req,res) => {
 			opponentName = users[randomUserIndex].username;
 		}
 
-		opponent = users[randomUserIndex]
-		return Hero.find({owner:opponent._id}).populate("superPowers")
+		opponent = users[randomUserIndex].serialize();
+		return Hero.find({owner:opponent.id}).populate("superPowers")
 	})
 
 	.then(heroes => {

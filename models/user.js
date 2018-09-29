@@ -18,7 +18,10 @@ const userSchema = mongoose.Schema({
 userSchema.methods.serialize = function(){
 	return{
 		username: this.username || '',
-		id: this._id
+		id: this._id,
+		matches:this.matches,
+		matchHistory:this.matchHistory,
+		heroes:this.heroes
 	}
 }
 
