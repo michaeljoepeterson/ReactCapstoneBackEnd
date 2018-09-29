@@ -11,7 +11,8 @@ const userSchema = mongoose.Schema({
 	password: {type:String,required:true},
 	wins: {type:Number,default:0},
 	matches: {type:Number,default:0},
-	matchHistory: {type:Array}
+	matchHistory: {type:Array},
+	heroes:{type:Number,default:0}
 });
 
 userSchema.methods.serialize = function(){

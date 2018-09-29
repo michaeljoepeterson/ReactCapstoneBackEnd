@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false });
 const {Hero} = require("../models/heroes");
+const {User} = require("../models/user");
 const {Superpower} = require('../models/superpowers');
 const {checkChars} = require('../checkChars');
 router.use(jwtAuth);
@@ -54,19 +55,19 @@ router.post("/",checkChars,(req,res)=>{
 	//{ $or: [ {powerName: ability1}, { powerName: ability2} ...] }
 	return Superpower.find({powerName:ability1})
 	.then(power =>{
-		console.log(power);
+		//console.log(power);
 		heroPowersId.push(power[0]._id)
 		return Superpower.find({powerName:ability2})
 	})
 	.then(power => {
-		console.log(power);
+		//console.log(power);
 		heroPowersId.push(power[0]._id)
 		return Superpower.find({powerName:ability3})
 	})
 	.then(power => {
-		console.log(power);
+		//console.log(power);
 		heroPowersId.push(power[0]._id)
-		console.log(heroPowersId);
+		//console.log(heroPowersId);
 		return Hero.create({
 			heroName:heroName,
 			health:health,
@@ -82,9 +83,13 @@ router.post("/",checkChars,(req,res)=>{
 		})		
 	})
 	.then(hero => {
-		return res.status(201).json(hero.serialize());
+		return User.findOneAndUpdate({"_id":userId},{$inc:{heroes:1}});
+	})
+	.then(user => {
+		return res.status(201).json(user.serialize());
 	})
 	.catch(err => {
+		console.log(err);
 		if(err.reason === 'ValidationError'){
 			return res.status(err.code).json(err);
 		}

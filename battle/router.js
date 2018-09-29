@@ -130,7 +130,7 @@ router.get("/findmatch", (req,res) => {
 		let randomUserIndex = Math.floor(Math.random() * users.length); 
 		console.log("random user index:",randomUserIndex)
 		let opponentName = users[randomUserIndex].username;
-		while(opponentName === username){
+		while(opponentName === username || users[randomUserIndex].heroes === 0){
 			console.log("inside the while loop");
 			randomUserIndex = Math.floor(Math.random() * users.length); 
 			opponentName = users[randomUserIndex].username;
