@@ -21,7 +21,8 @@ userSchema.methods.serialize = function(){
 		id: this._id,
 		matches:this.matches,
 		matchHistory:this.matchHistory,
-		heroes:this.heroes
+		heroes:this.heroes,
+		wins:this.wins
 	}
 }
 

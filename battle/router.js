@@ -17,6 +17,7 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 
 	//current user is hero1 and opponent user is hero 2
 	const {currentUser} = req.body;
+	console.log("user at begining",currentUser);
 	const {opponent} = req.body;
 	let currentUserWin = 0;
 	let opponentWin = 0;
@@ -58,24 +59,25 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 	})
 
 	.then(scores => {
-		console.log(scores);
+		console.log("users",currentUser,opponent);
+		console.log("currnet user win", currentUserWin);
 		let foundUser = false;
 		scores.forEach(score => {
 			if(score.username === currentUser.username){
 				foundUser = true;
 			}
 		})
-		const userWinRate = (currentUser.wins + currentUserWin) / (currentUser.matches + 1);
+		const userWinRate = parseInt(currentUser.wins,10) / (parseInt(currentUser.matches) + 1);
 		if(!foundUser){
 			return LeaderBoardUser.create({
 				username:currentUser.username,
-				wins:currentUser.wins + currentUserWin,
+				wins:parseInt(currentUser.wins,10),
 				winRate:userWinRate,
 				matches:currentUser.matches + 1
 			})
 		}
 		else if(foundUser){
-			return LeaderBoardUser.findOneAndUpdate({"username":currentUser.username},{$set:{winRate:userWinRate},$inc:{wins:currentUserWin,matches:1}})
+			return LeaderBoardUser.findOneAndUpdate({"username":currentUser.username},{$set:{winRate:userWinRate,wins:currentUser.wins},$inc:{matches:1}})
 		}
 		
 	})
@@ -93,17 +95,17 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 				foundUser = true;
 			}
 		})
-		const opponentWinRate = (opponent.wins + opponentWin) / (opponent.matches + 1);
+		const opponentWinRate = parseInt(opponent.wins,10)  / (parseInt(opponent.matches) + 1);
 		if(!foundUser){
 			return LeaderBoardUser.create({
 				username:opponent.username,
-				wins:opponent.wins + opponentWin,
+				wins:opponent.wins,
 				winRate:opponentWinRate,
 				matches:opponent.matches + 1
 			})
 		}
 		else if(foundUser){
-			return LeaderBoardUser.findOneAndUpdate({"username":opponent.username},{$set:{winRate:opponentWinRate},$inc:{wins:opponentWin,matches:1}})
+			return LeaderBoardUser.findOneAndUpdate({"username":opponent.username},{$set:{winRate:opponentWinRate,wins:opponent.wins},$inc:{matches:1}})
 		}
 	})
 
