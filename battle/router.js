@@ -42,19 +42,22 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 		win: opponentWin === 1 ? "y":"n"
 	}
 	//console.log(currentUser.matchHistory);
-	currentUser.matchHistory.push(matchCurrrentUser);
+	//currentUser.matchHistory.push(matchCurrrentUser);
 	currentUser.wins += currentUserWin;
-	opponent.matchHistory.push(matchOpponent);
+	//opponent.matchHistory.push(matchOpponent);
 	opponent.wins += opponentWin;
 	//console.log(currentUser.matchHistory);
-	return User.findOneAndUpdate({"username":currentUser.username},{$set:{matchHistory:currentUser.matchHistory},$inc:{wins:currentUserWin,matches:1}})
+	return User.findOneAndUpdate({"username":currentUser.username},{$inc:{wins:currentUserWin,matches:1},
+		$push:{matchHistory:matchCurrrentUser}},{new: true})
 	.then(user =>{
-	
-		return User.findOneAndUpdate({"username":opponent.username},{$set:{matchHistory:opponent.matchHistory},$inc:{wins:opponentWin,matches:1}})
+		currentUser.wins = user.wins;
+		return User.findOneAndUpdate({"username":opponent.username},{$inc:{wins:opponentWin,matches:1},
+			$push:{matchHistory:matchOpponent}},{new: true})
 		
 	})
 
 	.then(user=>{
+		opponent.wins = user.wins;
 		return LeaderBoardUser.find({})
 	})
 
@@ -72,12 +75,11 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 			return LeaderBoardUser.create({
 				username:currentUser.username,
 				wins:parseInt(currentUser.wins,10),
-				winRate:userWinRate,
 				matches:currentUser.matches + 1
 			})
 		}
 		else if(foundUser){
-			return LeaderBoardUser.findOneAndUpdate({"username":currentUser.username},{$set:{winRate:userWinRate,wins:currentUser.wins},$inc:{matches:1}})
+			return LeaderBoardUser.findOneAndUpdate({"username":currentUser.username},{$inc:{matches:1,wins:currentUserWin}})
 		}
 		
 	})
@@ -88,7 +90,7 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 	})
 
 	.then(scores => {
-		console.log(scores);
+		console.log("the scores serialized",scores[0].serialize());
 		let foundUser = false;
 		scores.forEach(score => {
 			if(score.username === opponent.username){
@@ -100,12 +102,11 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 			return LeaderBoardUser.create({
 				username:opponent.username,
 				wins:opponent.wins,
-				winRate:opponentWinRate,
 				matches:opponent.matches + 1
 			})
 		}
 		else if(foundUser){
-			return LeaderBoardUser.findOneAndUpdate({"username":opponent.username},{$set:{winRate:opponentWinRate,wins:opponent.wins},$inc:{matches:1}})
+			return LeaderBoardUser.findOneAndUpdate({"username":opponent.username},{$inc:{matches:1,wins:opponentWin}})
 		}
 	})
 
