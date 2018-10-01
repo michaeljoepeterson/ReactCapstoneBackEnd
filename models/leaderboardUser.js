@@ -11,7 +11,8 @@ leaderBoardUserSchema.virtual("winRate").get(function(){
 	if(this.matches === 0){
 		return 0;
 	}
-	return this.wins / this.matches;
+	let winRatio = (this.wins / this.matches) * 100;
+	return Math.round(winRatio * 100) / 100;
 })
 
 leaderBoardUserSchema.methods.serialize = function () {

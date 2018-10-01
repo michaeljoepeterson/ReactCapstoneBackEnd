@@ -10,9 +10,16 @@ router.get("/",checkChars,(req,res) => {
 	return LeaderBoardUser.find({})
 
 	.then(scores => {
-		
-		return res.status(201).json(scores);
+		scores.sort((a,b) => parseInt(b.wins) - parseInt(a.wins));
+		return res.status(201).json(scores.map(score=>score.serialize()));
 	})
+	.catch(err => {
+		if(err.reason === 'ValidationError'){
+			return res.status(err.code).json(err);
+		}
+		console.log(err);
+		res.status(500).json({code:500, message:'internal server error'});
+	});
 });
 
 module.exports = {router};
