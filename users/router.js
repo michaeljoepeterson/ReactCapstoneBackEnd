@@ -114,4 +114,28 @@ router.post('/',jsonParser,checkChars,(req,res) => {
 	});
 });
 
+router.get("/stats", checkChars, (req,res) => {
+	let username = req.query.username;
+
+	return User.find({"username":username})
+
+	.then(user => {
+		console.log(user.length);
+		if(user.length === 0){
+			return res.status(422).json({
+		      code: 422,
+		      reason: 'ValidationError',
+		      message: 'Cannot find user'
+		    });
+		}
+		return res.status(201).json(user[0].serialize())
+	})
+	.catch(err => {
+		console.log(err);
+		if(err.reason === 'ValidationError'){
+			return res.status(err.code).json(err);
+		}
+		res.status(500).json({code:500, message:'internal server error'});
+	});
+});
 module.exports = {router};
