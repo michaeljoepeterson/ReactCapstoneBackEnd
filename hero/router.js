@@ -46,7 +46,7 @@ router.post("/",checkChars,(req,res)=>{
 		return res.status(422).json({
 			code:422,
 			reason:"ValidationError",
-			message:"Missing points"
+			message:"Sum incorrect"
 		});
 	}
 	console.log("after third check");
