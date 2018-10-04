@@ -4,6 +4,7 @@ const jsonParser = bodyParser.json();
 const {User} = require('../models/user');
 const jwt = require('jsonwebtoken');
 const {checkChars} = require('../checkChars');
+const passport = require('passport');
 const router = express.Router();
 
 router.post('/',jsonParser,checkChars,(req,res) => {
@@ -114,7 +115,9 @@ router.post('/',jsonParser,checkChars,(req,res) => {
 	});
 });
 
-router.get("/stats", checkChars, (req,res) => {
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
+router.get("/stats", checkChars, jwtAuth,(req,res) => {
 	let username = req.query.username;
 
 	return User.find({"username":username})
