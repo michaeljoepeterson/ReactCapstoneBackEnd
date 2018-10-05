@@ -10,6 +10,7 @@ const heroSchema = mongoose.Schema({
 	toughness: {type:Number, required:true,},
 	agility: {type:Number, required:true,},
 	superAbility: {type:Number, required:true,},
+	imageUrl:{type:String,default:"https://img00.deviantart.net/9141/i/2002/31/9/b/i_invented_the_question_mark.jpg"},
 	superPowers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Superpower', unique: false, required: [false, 'No super power found']}],
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: false, required: [false, 'No hero found']}
 });

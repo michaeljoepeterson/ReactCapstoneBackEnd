@@ -10,7 +10,7 @@ router.use(jwtAuth);
 //create heroes
 router.post("/",checkChars,(req,res)=>{
 	const userId = req.user.id;
-	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility,ability1,ability2,ability3} = req.body;
+	let {heroName,health,maxhealth,abilityPoints,maxAbilityPoints,strength,toughness,agility, superAbility,ability1,ability2,ability3,imageUrl} = req.body;
 	console.log("the req is",req.body);
 	let heroPowersId = [];
 	if(heroName === "" || ability1 === "" || ability2 === "" || ability3 === ""){
@@ -79,6 +79,7 @@ router.post("/",checkChars,(req,res)=>{
 			agility:agility,
 			superAbility:superAbility,
 			superPowers:heroPowersId,
+			imageUrl:imageUrl,
 			owner:userId
 		})		
 	})
