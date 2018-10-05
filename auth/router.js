@@ -10,7 +10,8 @@ const createAuthToken = function(user){
 		{
 			username:user.username,
 			id:user.id,
-			heroes:user.heroes
+			heroes:user.heroes,
+			matches:user.matches
 		}
 	}, config.JWT_SECRET,{
 		subject: user.username,

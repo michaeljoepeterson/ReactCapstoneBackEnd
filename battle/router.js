@@ -62,20 +62,20 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 	})
 
 	.then(scores => {
-		console.log("users",currentUser,opponent);
-		console.log("currnet user win", currentUserWin);
+		console.log("users",currentUser);
+		console.log("currnet user win", currentUserWin ,parseInt(currentUser.matches + 1,10));
 		let foundUser = false;
 		scores.forEach(score => {
 			if(score.username === currentUser.username){
 				foundUser = true;
 			}
 		})
-		const userWinRate = parseInt(currentUser.wins,10) / (parseInt(currentUser.matches) + 1);
+		const userWinRate = parseInt(currentUser.wins,10) / (parseInt(currentUser.matches,10) + 1);
 		if(!foundUser){
 			return LeaderBoardUser.create({
 				username:currentUser.username,
 				wins:parseInt(currentUser.wins,10),
-				matches:currentUser.matches + 1
+				matches:parseInt(currentUser.matches + 1,10)
 			})
 		}
 		else if(foundUser){
@@ -101,8 +101,8 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 		if(!foundUser){
 			return LeaderBoardUser.create({
 				username:opponent.username,
-				wins:opponent.wins,
-				matches:opponent.matches + 1
+				wins:parseInt(opponent.wins,10),
+				matches:parseInt(opponent.matches + 1,10)
 			})
 		}
 		else if(foundUser){
