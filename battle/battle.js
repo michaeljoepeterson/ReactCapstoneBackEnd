@@ -23,7 +23,7 @@ function determineSpecialAttack(maxPowerArray,hero){
 	for(let i = 0;i < maxPowerArray.length;i++){
 		if(i === 0){
 			specialResults.totalAP += Math.round(50 * (1-hero.strength / 100));
-			specialResults.damage += Math.round(30 * maxPowerArray[i] / 100 * hero.strength / 100);
+			specialResults.damage += Math.round(20 * maxPowerArray[i] / 100 * hero.strength / 100);
 		}
 		else if(i === 1){
 			specialResults.totalAP += Math.round(50 * (1 - hero.superAbility / 100));
@@ -31,7 +31,7 @@ function determineSpecialAttack(maxPowerArray,hero){
 		}
 		else if(i===2){
 			specialResults.totalAP += Math.round(50 * (1 - hero.toughness / 100));
-			specialResults.heal += Math.round(30 * maxPowerArray[i] / 100 * hero.toughness/100);
+			specialResults.heal += Math.round(45 * maxPowerArray[i] / 100 * hero.toughness/100);
 		}
 	}
 
@@ -50,10 +50,10 @@ function determineSpecialAttackPassive(maxPowerArray,hero){
 			specialPassives.damage += Math.round(10 * maxPowerArray[i] / 100 * hero.strength / 100);
 		}
 		else if(i === 1){
-			specialPassives.critChance += Math.round(15 * hero.agility/100 *maxPowerArray[i]/100);
+			specialPassives.critChance += Math.round(20 * hero.agility/100 *maxPowerArray[i]/100);
 		}
 		else if(i===2){
-			specialPassives.heal += Math.round(5 * maxPowerArray[i] / 100 * hero.toughness/100);
+			specialPassives.heal += Math.round(10 * maxPowerArray[i] / 100 * hero.toughness/100);
 		}
 	}
 
@@ -86,7 +86,7 @@ function battleTurn(turnChoice, hero, hero2, heroSpecialStats,heroStats){
 	else if(turnChoice === "special" && hero.abilityPoints >= heroSpecialStats.totalAP){
 		hero.abilityPoints -= heroSpecialStats.totalAP;
 		hero2.health -= heroSpecialStats.damage;
-		const critDamage = critHandle(heroSpecialStats.critChance,hero.agility,hero.superAbility,70,30);
+		const critDamage = critHandle(heroSpecialStats.critChance,hero.agility,hero.superAbility,90,60);
 		hero2.health -= critDamage;
 		hero.health += heroSpecialStats.heal;
 		heroStats.apTotal += heroSpecialStats.totalAP;

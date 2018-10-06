@@ -19,6 +19,13 @@ router.post("/",checkSum, checkChars,Battle,(req,res) => {
 	const {currentUser} = req.body;
 	console.log("user at begining",currentUser);
 	const {opponent} = req.body;
+	if(!currentUser||!opponent){
+		return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Missing User"
+		});
+	}
 	let currentUserWin = 0;
 	let opponentWin = 0;
 	if(req.results.hero1Wins > req.results.hero2Wins){
@@ -127,6 +134,13 @@ router.get("/findmatch", (req,res) => {
 	const username = req.query.username;
 	let opponent;
 	console.log(username);
+	if(!username){
+		return res.status(422).json({
+			code:422,
+			reason:"ValidationError",
+			message:"Missing Field"
+		});
+	}
 	return User.find({})
 	.then(users =>{
 
