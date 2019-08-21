@@ -56,9 +56,14 @@ function runServer(databaseUrl, port = PORT) {
         .on('error', err => {
           mongoose.disconnect();
           reject(err);
-        });
+        })
+
     });
-  });
+  })
+  .catch(err => {
+        //mongoose.disconnect();
+        console.log("error in server");
+      });
 }
 
 function closeServer() {
