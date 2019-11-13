@@ -55,17 +55,17 @@ router.post("/",checkChars,(req,res)=>{
 	//{ $or: [ {powerName: ability1}, { powerName: ability2} ...] }
 	return Superpower.find({powerName:ability1})
 	.then(power =>{
-		//console.log(power);
+		console.log(power,ability1);
 		heroPowersId.push(power[0]._id)
 		return Superpower.find({powerName:ability2})
 	})
 	.then(power => {
-		//console.log(power);
+		console.log(power,ability2);
 		heroPowersId.push(power[0]._id)
 		return Superpower.find({powerName:ability3})
 	})
 	.then(power => {
-		//console.log(power);
+		console.log(power,ability3);
 		heroPowersId.push(power[0]._id)
 		//console.log(heroPowersId);
 		return Hero.create({
