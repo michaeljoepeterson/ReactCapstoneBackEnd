@@ -19,6 +19,7 @@ const {router: leaderboardRouter} = require('./leaderboards/router');
 const {localStrategy, jwtStrategy} = require('./auth/strategies');
 mongoose.Promise = global.Promise;
 app.use(function (req, res, next) {
+  console.log('test');
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
